@@ -46,12 +46,14 @@ export class GoogleAuthWeb extends WebPlugin implements GoogleAuthPlugin {
 
     const metaClientId = (document.getElementsByName('google-signin-client_id')[0] as any)?.content;
     const clientId = _options.clientId || metaClientId || '';
+    const apiKey = _options.apiKey || '';
 
     if (!clientId) {
       console.warn('GoogleAuthPlugin - clientId is empty');
     }
 
     this.options = {
+      apiKey,
       clientId,
       grantOfflineAccess: _options.grantOfflineAccess ?? false,
       scopes: _options.scopes || [],
@@ -80,6 +82,17 @@ export class GoogleAuthWeb extends WebPlugin implements GoogleAuthPlugin {
 
       gapi.auth2.init(clientConfig);
       (window as any).gapiResolve();
+    });
+
+    if (this.options.apiKey) {
+      gapi.load('client', this.initClient);
+    }
+  }
+
+  async initClient() {
+    await gapi.client.init({
+      apiKey: this.options.apiKey,
+      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
     });
   }
 

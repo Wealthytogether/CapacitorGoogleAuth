@@ -31,6 +31,14 @@ export interface Authentication {
 
 export interface GoogleAuthPluginOptions {
   /**
+   * API Key, found and created in the Google Developers Console.
+   * common for Android or iOS
+   * @example xxxxxx-xxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+   * @since 3.3.0
+   */
+  apiKey?: string;
+
+  /**
    * The app's client ID, found and created in the Google Developers Console.
    * common for Android or iOS
    * @example xxxxxx-xxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
@@ -72,7 +80,7 @@ export interface GoogleAuthPluginOptions {
   forceCodeForRefreshToken?: boolean;
 }
 
-export interface InitOptions extends Pick<GoogleAuthPluginOptions, 'scopes' | 'clientId'> {
+export interface InitOptions extends Pick<GoogleAuthPluginOptions, 'scopes' | 'clientId' | 'apiKey'> {
   /**
    * Set if your application needs to refresh access tokens when the user is not present at the browser.
    * In response use `serverAuthCode` key
