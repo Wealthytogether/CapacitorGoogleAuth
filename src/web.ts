@@ -35,6 +35,7 @@ export class GoogleAuthWeb extends WebPlugin implements GoogleAuthPlugin {
 
   initialize(
     _options: Partial<InitOptions> = {
+      apiKey: '',
       clientId: '',
       scopes: [],
       grantOfflineAccess: false,
@@ -85,15 +86,13 @@ export class GoogleAuthWeb extends WebPlugin implements GoogleAuthPlugin {
     });
 
     if (this.options.apiKey) {
-      gapi.load('client', this.initClient);
+      gapi.load('client', async () => {
+        await gapi.client.init({
+          apiKey: this.options.apiKey,
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+        });
+      });
     }
-  }
-
-  private async initClient() {
-    await gapi.client.init({
-      apiKey: this.options.apiKey,
-      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-    });
   }
 
   async signIn() {
@@ -141,6 +140,15 @@ export class GoogleAuthWeb extends WebPlugin implements GoogleAuthPlugin {
   async getInstance() {
     const instance = gapi.auth2.getAuthInstance();
     return instance;
+  }
+
+  async getEventList(
+    options: gapi.client.calendar.EventsListParameters = {
+      calendarId: 'primary',
+    }
+  ) {
+    const response = await gapi.client.calendar.events.list(options);
+    return response.result;
   }
 
   private async addUserChangeListener() {
