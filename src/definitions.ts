@@ -95,6 +95,7 @@ export interface GoogleAuthPlugin {
   signIn(): Promise<User>;
   refresh(): Promise<Authentication>;
   signOut(): Promise<any>;
+  getInstance(): Promise<gapi.auth2.GoogleAuthBase>;
 
   /**
    * Init hook for load gapi and init plugin

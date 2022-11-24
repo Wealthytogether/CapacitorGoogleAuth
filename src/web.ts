@@ -89,7 +89,7 @@ export class GoogleAuthWeb extends WebPlugin implements GoogleAuthPlugin {
     }
   }
 
-  async initClient() {
+  private async initClient() {
     await gapi.client.init({
       apiKey: this.options.apiKey,
       discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
@@ -136,6 +136,11 @@ export class GoogleAuthWeb extends WebPlugin implements GoogleAuthPlugin {
 
   async signOut() {
     return gapi.auth2.getAuthInstance().signOut();
+  }
+
+  async getInstance() {
+    const instance = gapi.auth2.getAuthInstance();
+    return instance;
   }
 
   private async addUserChangeListener() {
