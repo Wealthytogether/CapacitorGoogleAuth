@@ -91,12 +91,148 @@ export interface InitOptions extends Pick<GoogleAuthPluginOptions, 'scopes' | 'c
   grantOfflineAccess: boolean;
 }
 
+export interface CalendarEvent {
+  kind: 'calendar#event';
+  etag: string;
+  id: string;
+  status?: 'conmfirmed' | 'tentative' | 'cancelled' | undefined;
+  htmlLink: string;
+  created: string;
+  updated: string;
+  summary: string;
+  description: string;
+  location?: string | undefined;
+  colorId?: string | undefined;
+  creator: {
+    id?: string | undefined;
+    email?: string | undefined;
+    displayName?: string | undefined;
+    self?: boolean | undefined;
+  };
+  organizer: {
+    id?: string | undefined;
+    email?: string | undefined;
+    displayName?: string | undefined;
+    self?: boolean | undefined;
+  };
+  start: {
+    date?: string | undefined;
+    dateTime?: string | undefined;
+    timeZone?: string | undefined;
+  };
+  end: {
+    date?: string | undefined;
+    dateTime?: string | undefined;
+    timeZone?: string | undefined;
+  };
+  endTimeUnspecified?: boolean | undefined;
+  recurrence: string[];
+  recurringEventId?: string | undefined;
+  originalStartTime?:
+    | {
+        date: string;
+        dateTime: string;
+        timeZone?: string | undefined;
+      }
+    | undefined;
+  transparency?: 'opaque' | 'transparent' | undefined;
+  visibility?: 'default' | 'public' | 'private' | 'confidential' | undefined;
+  iCalUID: string;
+  sequence: number;
+  attendees?:
+    | {
+        id: string;
+        email: string;
+        displayName?: string | undefined;
+        organizer: boolean;
+        self: boolean;
+        resource: boolean;
+        optional?: boolean | undefined;
+        responseStatus: 'needsAction' | 'declined' | 'tentative' | 'accepted';
+        comment?: string | undefined;
+        additionalGuests?: number | undefined;
+      }[]
+    | undefined;
+  attendeesOmitted?: boolean | undefined;
+  extendedProperties?:
+    | {
+        private: {
+          [key: string]: string;
+        };
+        shared: {
+          [key: string]: string;
+        };
+      }
+    | undefined;
+  hangoutLink?: string | undefined;
+  gadget?:
+    | {
+        type: string;
+        title: string;
+        link: string;
+        iconLink: string;
+        width?: number | undefined;
+        height?: number | undefined;
+        display?: 'icon' | 'chip' | undefined;
+        preferences: {
+          [key: string]: string;
+        };
+      }
+    | undefined;
+  anyoneCanAddSelf?: boolean | undefined;
+  guestsCanInviteOthers?: boolean | undefined;
+  guestsCanModify?: boolean | undefined;
+  guestsCanSeeOtherGuests?: boolean | undefined;
+  privateCopy?: boolean | undefined;
+  locked?: boolean | undefined;
+  reminders: {
+    useDefault: boolean;
+    overrides?:
+      | {
+          method: 'email' | 'sms' | 'popup';
+          minutes: number;
+        }[]
+      | undefined;
+  };
+  source?:
+    | {
+        url: string;
+        title: string;
+      }
+    | undefined;
+  attachments?:
+    | {
+        fileUrl: string;
+        title: string;
+        mimeType: string;
+        iconLink: string;
+        fileId: string;
+      }[]
+    | undefined;
+}
+
+export interface CalendarEventResponse {
+  kind: 'calendar#events';
+  etag: string;
+  summary: string;
+  description: string;
+  updated: string;
+  timeZone: string;
+  accessRole: 'none' | 'freeBusyReader' | 'reader' | 'writer' | 'owner';
+  defaultReminders: {
+    method: 'email' | 'sms' | 'popup';
+    minutes: number;
+  }[];
+  nextPageToken?: string | undefined;
+  nextSyncToken?: string | undefined;
+  items: CalendarEvent[];
+}
+
 export interface GoogleAuthPlugin {
   signIn(): Promise<User>;
   refresh(): Promise<Authentication>;
   signOut(): Promise<any>;
-  getInstance(): Promise<gapi.auth2.GoogleAuthBase>;
-  getEventList(): Promise<gapi.client.calendar.Events>;
+  getEventList(): Promise<CalendarEventResponse>;
 
   /**
    * Init hook for load gapi and init plugin

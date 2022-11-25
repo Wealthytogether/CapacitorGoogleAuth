@@ -1,5 +1,5 @@
 import { WebPlugin } from '@capacitor/core';
-import { GoogleAuthPlugin, InitOptions, User } from './definitions';
+import { CalendarEventResponse, GoogleAuthPlugin, InitOptions, User } from './definitions';
 
 export class GoogleAuthWeb extends WebPlugin implements GoogleAuthPlugin {
   gapiLoaded: Promise<void>;
@@ -137,18 +137,13 @@ export class GoogleAuthWeb extends WebPlugin implements GoogleAuthPlugin {
     return gapi.auth2.getAuthInstance().signOut();
   }
 
-  async getInstance() {
-    const instance = gapi.auth2.getAuthInstance();
-    return instance;
-  }
-
   async getEventList(
     options: gapi.client.calendar.EventsListParameters = {
       calendarId: 'primary',
     }
   ) {
     const response = await gapi.client.calendar.events.list(options);
-    return response.result;
+    return response.result as CalendarEventResponse;
   }
 
   private async addUserChangeListener() {
